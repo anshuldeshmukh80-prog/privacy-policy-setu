@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Get Setu</title>
+<style>
+  :root { --bg: #f5f7fa; --card: #fff; --ink: #0f1720; --mute: #5a6b7b; --green: #22c07a; --line: #dde3ea; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0f1720; --card: #16212b; --ink: #eaf0f5; --mute: #8b9baa; --line: #263543; } }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, sans-serif; }
+  main { max-width: 640px; margin: 0 auto; padding: 32px 16px 48px; }
+  h1 { font-size: 34px; margin: 0 0 4px; }
+  .sub { color: var(--mute); margin: 0 0 24px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 20px; margin-bottom: 16px; }
+  .card h2 { margin: 0 0 6px; font-size: 20px; }
+  a.btn { display: inline-block; margin-top: 10px; padding: 12px 20px; border-radius: 12px; background: var(--green); color: #04160d; font-weight: 700; text-decoration: none; }
+  .note { color: var(--mute); font-size: 14px; margin: 8px 0 0; }
+  table { width: 100%; border-collapse: collapse; font-size: 15px; }
+  td { padding: 8px 4px; border-top: 1px solid var(--line); vertical-align: top; }
+  td:last-child { color: var(--mute); text-align: right; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Setu</h1>
+  <p class="sub">Link your phone, TV and computer: files, clipboard, screen sharing and a remote.</p>
+
+  <div class="card" id="you"></div>
+
+  <div class="card">
+    <h2>Every device</h2>
+    <table>
+      <tr><td>Android phone</td><td>Google Play (testers)</td></tr>
+      <tr><td>Android TV / Google TV<br><small>Sony, Philips, TCL, Hisense, Xiaomi, Shield</small></td><td>Google Play (testers)</td></tr>
+      <tr><td>Samsung TV</td><td>Not in the store yet</td></tr>
+      <tr><td>LG TV</td><td>Not in the store yet</td></tr>
+      <tr><td>Amazon Fire TV</td><td>Not published yet</td></tr>
+      <tr><td>Windows</td><td>Not published yet</td></tr>
+      <tr><td>iPhone / Mac</td><td>Not available yet</td></tr>
+      <tr><td>Roku, Vizio, Apple TV</td><td>No version</td></tr>
+    </table>
+  </div>
+</main>
+<script>
+var PLAY = "https://play.google.com/store/apps/details?id=app.setu.connect";
+var TV_ON_PLAY = "Open Google Play on the TV, search for Setu, and install. You must be signed in with the same Google account as the one you gave as a tester.";
+
+// What each kind of visitor sees. Only Google Play is a real, working link today.
+var PAGES = {
+  androidtv: ["Android TV / Google TV", TV_ON_PLAY, null],
+  android: ["Android phone", "Open Google Play on this phone and install Setu. While Setu is in testing, you need the tester invite first.", PLAY],
+  firetv: ["Amazon Fire TV", "Setu for Fire TV isn't published yet.", null],
+  samsung: ["Samsung TV", "Setu for Samsung TVs isn't in the Samsung store yet. Until then, install Setu on your phone and open the Setu app on the TV once it's published.", null],
+  lg: ["LG TV", "Setu for LG TVs isn't in the LG store yet.", null],
+  roku: ["Roku", "There is no Setu for Roku.", null],
+  ios: ["iPhone", "Setu for iPhone and Mac isn't available yet.", null],
+  windows: ["Windows", "The Windows version isn't published yet. Install Setu on your phone first.", null],
+  other: ["your device", "Setu's phone app is on Google Play. For a TV, use an Android TV or Google TV.", PLAY]
+};
+
+function detect(ua) {
+  if (/Tizen|SMART-TV.*Samsung|SamsungBrowser.*TV/i.test(ua)) return "samsung";
+  if (/Web0S|webOS/i.test(ua)) return "lg";
+  if (/Roku/i.test(ua)) return "roku";
+  if (/AFT[A-Z0-9]+\b|Amazon.*Fire/i.test(ua)) return "firetv";
+  if (/Android/i.test(ua) && /\bTV\b|Chromecast|BRAVIA|Google TV|SmartTV/i.test(ua)) return "androidtv";
+  if (/Android/i.test(ua)) return "android";
+  if (/iPhone|iPad|Macintosh/i.test(ua)) return "ios";
+  if (/Windows/i.test(ua)) return "windows";
+  return "other";
+}
+
+function render(ua) {
+  var p = PAGES[detect(ua)], el = document.getElementById("you");
+  el.innerHTML = "";
+  var h = document.createElement("h2"); h.textContent = "Setu on " + p[0]; el.appendChild(h);
+  var t = document.createElement("p"); t.textContent = p[1]; t.style.margin = "0"; el.appendChild(t);
+  if (p[2]) { var a = document.createElement("a"); a.className = "btn"; a.href = p[2]; a.textContent = "Open in Google Play"; el.appendChild(a); }
+}
+render(navigator.userAgent);
+</script>
+</body>
+</html>
